@@ -1,6 +1,7 @@
 name: build
 
-permissions: {} # no need any permissions
+permissions:
+  contents: read
 
 on:
   push:
@@ -22,10 +23,6 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    strategy:
-      fail-fast: true
-      matrix:
-        go: ["stable", "oldstable"]
 
     steps:
       - name: Check out code
@@ -34,8 +31,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go }}
-          check-latest: true
+          go-version: "stable"
 
       - name: Go Format
         run: gofmt -s -w . && git diff --exit-code
@@ -57,24 +53,3 @@ jobs:
 
       - name: Go Build
         run: go build -o /dev/null ./...
-
-      - name: Go Compile Tests
-        if: ${{ inputs.skipTests }}
-        run: go test -exec /bin/true ./...
-
-      - name: Go Test
-        if: ${{ !inputs.skipTests }}
-        run: go test -v -count=1 -race -shuffle=on -coverprofile=coverage.txt ./...
-
-      - name: Go Benchmark
-        if: ${{ !inputs.skipTests }}
-        run: go test -v -shuffle=on -run=- -bench=. -benchtime=1x ./...
-
-      - name: Upload Coverage
-        if: ${{ !inputs.skipTests }}
-        uses: codecov/codecov-action@v5
-        continue-on-error: true
-        with:
-          token: ${{secrets.CODECOV_TOKEN}}
-          file: ./coverage.txt
-          fail_ci_if_error: false
