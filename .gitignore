@@ -27,3 +27,5 @@ go.work.sum
 .idea
 
 .idea
+# Added by goreleaser init:
+dist/

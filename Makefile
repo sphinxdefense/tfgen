@@ -6,3 +6,6 @@ test:
 
 install: build
 	mv bin/tfgen /usr/local/bin
+
+lint:
+	golangci-lint run

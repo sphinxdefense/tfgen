@@ -9,18 +9,23 @@ on:
 permissions:
   contents: read
   # Optional: allow read access to pull requests. Use with `only-new-issues` option.
-  # pull-requests: read
+  pull-requests: read
 
 jobs:
   golangci:
+    strategy:
+      matrix:
+        go: [stable]
+        os: [ubuntu-latest, macos-latest]
     name: lint
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
-          go-version: stable
+          go-version: ${{ matrix.go }}
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.4
+          version: v2.6
+          only-new-issues: true

@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -11,7 +12,7 @@ import (
 func TestFindConfigFile(t *testing.T) {
 	assert := assert.New(t)
 	tempDir := t.TempDir()
-	println(tempDir)
+	log.Debug().Msgf("%s", tempDir)
 
 	require.NoError(t, os.MkdirAll(tempDir+"/dev/module-a/1/2/3", 0755))
 	require.NoError(t, os.MkdirAll(tempDir+"/dev/module-b/1/2/3", 0755))
