@@ -6,7 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"tfgen/tfgen"
+
+	"github.com/sphinxdefense/tfgen/tfgen"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"

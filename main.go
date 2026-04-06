@@ -2,7 +2,8 @@ package main
 
 import (
 	"os"
-	"tfgen/cmd"
+
+	"github.com/sphinxdefense/tfgen/cmd"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
