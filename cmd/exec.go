@@ -38,7 +38,7 @@ func exec(targetDir string, recurse, dryRun bool) error {
 	}
 
 	if err := execOne(dryRun, targetDir); err != nil {
-		return fmt.Errorf("could not execute inside %s: %w", targetDir, err)
+		return fmt.Errorf("%w", err)
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func walkFunc(path string, d fs.DirEntry, err error, dryRun bool) error {
 		log.Debug().Str("path", path).Msg("Found a directory containing a .tf file")
 		targetDir := filepath.Dir(path)
 		if err := execOne(dryRun, targetDir); err != nil {
-			return fmt.Errorf("could not execute inside %s: %w", targetDir, err)
+			return fmt.Errorf("%w", err)
 		}
 
 		// We have exec'd in this directory once, we can move to the next one
@@ -100,22 +100,25 @@ func execOne(dryRun bool, targetDir string) error {
 	log.Debug().Msgf("final config file: %+v", configHandler.MergedConfigFile)
 
 	hasError := false
+	errorString := ""
 	for templateName, templateBody := range configHandler.MergedConfigFile.TemplateFiles {
 		filePath := filepath.Join(configHandler.TargetDir, templateName)
 		if !dryRun {
 			if err := tfgen.WriteFile(filePath, templateBody, configHandler.TemplateVars); err != nil {
 				hasError = true
+				errorString = fmt.Sprintf("%v", err)
 			}
 		} else {
 			if err := tfgen.DryRunFile(filePath, templateBody, configHandler.TemplateVars); err != nil {
 				hasError = true
+				errorString = fmt.Sprintf("%v", err)
 			}
 		}
 	}
 
 	if hasError {
 		_ = configHandler.CleanupFiles()
-		return fmt.Errorf("failed to generate one or more templates, please check your configuration")
+		return fmt.Errorf("failed to generate %v", errorString)
 	}
 
 	return nil
