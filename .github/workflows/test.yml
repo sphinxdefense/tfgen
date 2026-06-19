@@ -32,7 +32,7 @@ jobs:
           go-version: "stable"
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Go Compile Tests
         if: ${{ inputs.skipTests }}
